@@ -179,4 +179,16 @@ app.get("/", (req, res) => {
   res.send("Backend is running ✅");
 });
 
+// Health endpoint - checks DB connectivity and reports status
+app.get('/health', async (req, res) => {
+  try {
+    // run a trivial query to verify the pool/DB is reachable
+    await pool.query('SELECT 1');
+    return res.json({ ok: true, db: true, message: 'OK' });
+  } catch (err) {
+    console.error('Health check DB error:', err && err.message ? err.message : err);
+    return res.status(503).json({ ok: false, db: false, error: err && err.message ? err.message : String(err) });
+  }
+});
+
 export default app;
