@@ -11,6 +11,9 @@ app.use(express.json());
 // Accept URL-encoded form submissions from the browser (for compatibility)
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static frontend from the public directory so pages and API share the same origin
+app.use(express.static(path.join(process.cwd(), 'public')));
+
 // Create MySQL connection pool (supports TiDB Cloud with TLS CA)
 const dbHost = process.env.DB_HOST;
 const dbPort = process.env.DB_PORT;
