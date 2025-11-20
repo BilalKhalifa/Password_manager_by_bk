@@ -1,5 +1,3 @@
-<?php include('php/session_check.php'); ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,5 +38,16 @@
   <button id="add-btn">+</button>
   
   <script src="js/dashboard.js"></script>
+  <script>
+    // Simple client-side session check for static hosting.
+    // If you use the Node API, store the JWT in localStorage as 'token'.
+    (function(){
+      const token = localStorage.getItem('token');
+      if (!token) {
+        // Not logged in — redirect to login page
+        window.location.href = 'index.html';
+      }
+    })();
+  </script>
 </body>
 </html>

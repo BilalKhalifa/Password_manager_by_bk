@@ -21,24 +21,36 @@ $(document).ready(function() {
   
       var formData = $(this).serialize(); // Get form data as URL-encoded string
   
+      // Determine action and build payload
+      const action = $('#action').val();
+      const payload = {
+        username: $('#username').val(),
+        password: $('#password').val()
+      };
+
+      const endpoint = action === 'register' ? '/api/register' : '/api/login';
+
       $.ajax({
-        url: 'php/auth.php', // PHP file to handle form logic
+        url: endpoint,
         type: 'POST',
-        data: formData,
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
         success: function(response) {
-          // Check the response from the PHP script
-          if (response === 'success') {
-            $('#message').text('Operation successful!').css('color', 'green');
-            // Redirect to another page, e.g., dashboard.html
-            setTimeout(function() {
-              window.location.href = 'dashboard.html';
-            }, 1000); // Wait 1 seconds before redirecting
+          // Expect JSON response from Node backend
+          if (response && response.success) {
+            // store token if present
+            if (response.token) localStorage.setItem('pm_token', response.token);
+            $('#message').text(response.message || 'Operation successful!').css('color', 'green');
+            setTimeout(function() { window.location.href = 'dashboard.html'; }, 1000);
           } else {
-            $('#message').text(response).css('color', 'red'); // Display error message
+            const msg = (response && response.error) ? response.error : (typeof response === 'string' ? response : 'Operation failed');
+            $('#message').text(msg).css('color', 'red');
           }
         },
-        error: function() {
-          $('#message').text('There was an error. Please try again.').css('color', 'red');
+        error: function(xhr) {
+          let msg = 'There was an error. Please try again.';
+          if (xhr && xhr.responseJSON && xhr.responseJSON.error) msg = xhr.responseJSON.error;
+          $('#message').text(msg).css('color', 'red');
         }
       });
     });
