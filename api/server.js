@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
 dotenv.config();
 const app = express();
@@ -23,7 +24,27 @@ const dbName = process.env.DB_NAME;
 
 // Allow overriding CA path via env; default to ./certs/ca-cert.pem
 const defaultCaPath = path.join(process.cwd(), "certs", "ca-cert.pem");
-const caPath = process.env.CA_CERT_PATH || defaultCaPath;
+let caPath = process.env.CA_CERT_PATH || defaultCaPath;
+
+// If DB_CA env var is present (useful on Vercel) write it to a temp file and use that
+const dbCa = process.env.DB_CA;
+if (dbCa) {
+  try {
+    const tmpDir = os.tmpdir();
+    const tmpCaPath = path.join(tmpDir, 'ca-cert.pem');
+    // write only if it doesn't already exist or content differs
+    let write = true;
+    if (fs.existsSync(tmpCaPath)) {
+      const existing = fs.readFileSync(tmpCaPath, 'utf8');
+      write = existing.trim() !== dbCa.trim();
+    }
+    if (write) fs.writeFileSync(tmpCaPath, dbCa);
+    caPath = tmpCaPath;
+    console.log(`DB_CA written to ${tmpCaPath}`);
+  } catch (err) {
+    console.warn('Failed to write DB_CA to temp file:', err.message);
+  }
+}
 
 let poolConfig = {
   host: dbHost,

@@ -42,9 +42,20 @@ npm start
 ## Deploying to Vercel
 - Add the environment variables in your Vercel project settings: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`, `JWT_SECRET`.
 - For the TiDB CA certificate, either:
-  - Add the `certs/ca-cert.pem` file to the repository (not recommended), or
-  - Store the certificate contents in an environment variable (e.g., `DB_CA`) and write it to `certs/ca-cert.pem` at startup — request help if you want this automated.
-- Ensure TiDB Cloud allows connections from Vercel's outbound IPs or use an appropriate networking solution.
+## Deploying to Vercel
+
+- Add the environment variables in your Vercel project settings: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASS`, `DB_NAME`, `JWT_SECRET`.
+- CA certificate handling on Vercel:
+  - Vercel's runtime is ephemeral and you can't reliably commit files at runtime. The project supports providing the TiDB CA certificate via an environment variable named `DB_CA` (the raw PEM contents).
+  - When `DB_CA` is set, the server writes that value to a temporary file at startup and uses it for TLS connections. This is the recommended approach for Vercel.
+  - Alternatively you can commit `certs/ca-cert.pem` to the repo (not recommended).
+- TiDB Cloud IP allowlist: Vercel uses many dynamic outbound IP addresses. If your TiDB Cloud instance requires IP allowlisting, you have three options:
+  1. Use a hosting provider for the Node API that provides a stable outbound IP (e.g., a small VM, Render, DigitalOcean) and whitelist that IP in TiDB Cloud.
+  2. Use a stable proxy/tunnel with a fixed IP that forwards requests to your API.
+  3. If your TiDB Cloud plan allows it, add the Vercel IP ranges (not generally recommended due to dynamic ranges).
+
+Note: serverless functions and connection pools
+- Serverless functions (like Vercel) create short-lived containers. The code attempts to reuse a connection pool across warm invocations, but you should still configure your TiDB instance to allow an appropriate number of connections. Monitor connection usage and set pool parameters as needed.
 
 ## Security notes (important)
 - Passwords for user accounts are stored in plain text in this demo. Before production:
