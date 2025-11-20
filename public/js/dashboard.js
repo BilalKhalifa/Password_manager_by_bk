@@ -4,7 +4,7 @@ $(document).ready(function () {
   const token = localStorage.getItem('token');
       if (!token) { $('#passwords-container').html('<p>Not authenticated.</p>'); return; }
       $.ajax({
-        url: '/api/passwords',
+        url: '/passwords',
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token },
         success: function (res) {
@@ -57,7 +57,7 @@ $(document).ready(function () {
         password: $('#site-password').val() || $('#add-form input[name="password"]').val()
       };
       $.ajax({
-        url: '/api/passwords',
+        url: '/passwords',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(payload),
@@ -84,7 +84,7 @@ $(document).ready(function () {
   const token = localStorage.getItem('token');
       if (!token) { alert('Not authenticated.'); return; }
       $.ajax({
-        url: '/api/passwords/' + passwordId,
+        url: '/passwords/' + passwordId,
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + token },
         success: function (res) {
