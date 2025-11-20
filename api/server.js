@@ -15,6 +15,20 @@ app.use(express.urlencoded({ extended: true }));
 // Serve static frontend from the public directory so pages and API share the same origin
 app.use(express.static(path.join(process.cwd(), 'public')));
 
+// Compatibility shim: if a request is routed to this function with a leading /api
+// prefix (e.g. `/api/login`) rewrite the url to the internal path so existing
+// route handlers (which are defined without the /api prefix) continue to work.
+app.use((req, res, next) => {
+  try {
+    if (typeof req.url === 'string' && req.url.startsWith('/api/')) {
+      req.url = req.url.replace(/^\/api/, '');
+    }
+  } catch (e) {
+    // ignore and continue
+  }
+  next();
+});
+
 // Create MySQL connection pool (supports TiDB Cloud with TLS CA)
 const dbHost = process.env.DB_HOST;
 const dbPort = process.env.DB_PORT;
