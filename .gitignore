@@ -1,1 +1,5 @@
 certs/ca-cert.pem
+# Local environment variables (do not commit secrets)
+.env
+node_modules/
+package-lock.json

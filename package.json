@@ -2,6 +2,11 @@
   "name": "password-manager",
   "version": "1.0.0",
   "type": "module",
+  "scripts": {
+    "start": "node api/run-server.js",
+    "seed": "node scripts/seed-user.js",
+    "test:login": "node scripts/login-test.js"
+  },
   "dependencies": {
     "express": "^4.19.2",
     "mysql2": "^3.9.1",
