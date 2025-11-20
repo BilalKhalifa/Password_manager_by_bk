@@ -4,7 +4,7 @@ $(document).ready(function () {
   const token = localStorage.getItem('token');
       if (!token) { $('#passwords-container').html('<p>Not authenticated.</p>'); return; }
       $.ajax({
-        url: '/passwords',
+        url: '/api/passwords',
         method: 'GET',
         headers: { 'Authorization': 'Bearer ' + token },
         success: function (res) {
@@ -48,8 +48,8 @@ $(document).ready(function () {
   
       var formData = $(this).serialize();
   
-      const token = localStorage.getItem('pm_token');
-      if (!token) { $('#add-message').css('color','red').text('Not authenticated.'); return; }
+  const token = localStorage.getItem('token');
+  if (!token) { $('#add-message').css('color','red').text('Not authenticated.'); return; }
       // read inputs by name (ids added in HTML) to be robust
       const payload = {
         website: $('#site-website').val() || $('#add-form input[name="website"]').val(),
@@ -57,7 +57,7 @@ $(document).ready(function () {
         password: $('#site-password').val() || $('#add-form input[name="password"]').val()
       };
       $.ajax({
-        url: '/passwords',
+        url: '/api/passwords',
         method: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(payload),
@@ -81,10 +81,10 @@ $(document).ready(function () {
   
       const passwordId = $(this).data('id');
   
-  const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
       if (!token) { alert('Not authenticated.'); return; }
       $.ajax({
-        url: '/passwords/' + passwordId,
+        url: '/api/passwords/' + passwordId,
         method: 'DELETE',
         headers: { 'Authorization': 'Bearer ' + token },
         success: function (res) {
@@ -97,7 +97,7 @@ $(document).ready(function () {
   
     // Logout button handling
     $('#logout-btn').click(function () {
-      localStorage.removeItem('pm_token');
+      localStorage.removeItem('token');
       window.location.href = 'index.html';
     });
   });

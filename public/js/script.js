@@ -28,7 +28,7 @@ $(document).ready(function() {
         password: $('#password').val()
       };
 
-  const endpoint = action === 'register' ? '/register' : '/login';
+  const endpoint = action === 'register' ? '/api/register' : '/api/login';
 
       $.ajax({
         url: endpoint,
