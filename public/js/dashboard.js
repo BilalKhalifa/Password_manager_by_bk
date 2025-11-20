@@ -1,7 +1,7 @@
 $(document).ready(function () {
     // Function to fetch passwords and display inside container
     function fetchPasswords() {
-      const token = localStorage.getItem('pm_token');
+  const token = localStorage.getItem('token');
       if (!token) { $('#passwords-container').html('<p>Not authenticated.</p>'); return; }
       $.ajax({
         url: '/api/passwords',
@@ -50,10 +50,11 @@ $(document).ready(function () {
   
       const token = localStorage.getItem('pm_token');
       if (!token) { $('#add-message').css('color','red').text('Not authenticated.'); return; }
+      // read inputs by name (ids added in HTML) to be robust
       const payload = {
-        website: $('#site-website').val(),
-        username: $('#site-username').val(),
-        password: $('#site-password').val()
+        website: $('#site-website').val() || $('#add-form input[name="website"]').val(),
+        username: $('#site-username').val() || $('#add-form input[name="username"]').val(),
+        password: $('#site-password').val() || $('#add-form input[name="password"]').val()
       };
       $.ajax({
         url: '/api/passwords',
@@ -80,7 +81,7 @@ $(document).ready(function () {
   
       const passwordId = $(this).data('id');
   
-      const token = localStorage.getItem('pm_token');
+  const token = localStorage.getItem('token');
       if (!token) { alert('Not authenticated.'); return; }
       $.ajax({
         url: '/api/passwords/' + passwordId,

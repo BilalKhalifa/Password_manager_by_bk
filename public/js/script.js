@@ -28,7 +28,7 @@ $(document).ready(function() {
         password: $('#password').val()
       };
 
-      const endpoint = action === 'register' ? '/api/register' : '/api/login';
+  const endpoint = action === 'register' ? '/register' : '/login';
 
       $.ajax({
         url: endpoint,
@@ -39,7 +39,7 @@ $(document).ready(function() {
           // Expect JSON response from Node backend
           if (response && response.success) {
             // store token if present
-            if (response.token) localStorage.setItem('pm_token', response.token);
+            if (response.token) localStorage.setItem('token', response.token);
             $('#message').text(response.message || 'Operation successful!').css('color', 'green');
             setTimeout(function() { window.location.href = 'dashboard.html'; }, 1000);
           } else {
